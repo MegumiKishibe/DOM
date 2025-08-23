@@ -1,9 +1,19 @@
-# **DOMとは(Document Object Model)**
+# **１、DOMとは(Document Object Model)**
+>Document Object Modelという名前のとおり、文書に含まれる要素や属性、テキストをそれぞれオブジェクトと見なし、
+>
+>「オブジェクトの集合（階層関係）が文書である」と考えるわけです。
+>
+>ちなみに、文書を構成する要素や属性、テキストといったオブジェクトのことをノードと呼び、
+>
+>オブジェクトの種類に応じて要素ノード、属性ノード、テキストノードなどと呼びます。
+>
+>DOMはこれらノードを抽出/追加/置換/削除するための汎用的な手段を提供するAPI（＝関数やオブジェクトの集合）なのです。
+> - 出典：JavaScript本格入門改訂版3版（山田祥寛著）
 
-HTML文書をブラウザ上で扱いやすいオブジェクトツリー形式で表現し、
-JavaScriptを使ってその要素や属性、スタイルなどを操作することができる。
-つまり、DOMを使うことでWebページの要素を追加・削除・変更したり、
-イベントの処理を行ったりすることができる。
+HTML文書をブラウザ上で扱いやすいオブジェクトツリー形式で表現し、  
+JavaScriptを使ってその要素や属性、スタイルなどを操作することができる。  
+つまり、DOMを使うことでWebページの要素を追加・削除・変更したり、  
+イベントの処理を行ったりすることができる。  
 
 ## **モデル（Model）：**
 HTMLをツリー状のオブジェクトにした“データ構造”。document や div などがノードとして並ぶ。
@@ -16,7 +26,7 @@ HTML            →     DOMツリー（ブラウザが作る）
                                 └─ <p id="msg">
 ```
 ## **API（操作手順）：**
-そのツリーを探す・読む・書き換えるための関数やプロパティ。
+そのツリーを探す・読む・書き換えるための関数やプロパティ\
 例：querySelector() / textContent / appendChild()。
 
 目的：JavaScriptから画面の内容（HTML）を安全・一貫したやり方で操作できるようにするため。  
@@ -62,7 +72,7 @@ JSは“言語”、DOMは“ブラウザが提供する機能（API）”。
 </html>
 ```
 
-## **サンプルindex.htmlから作成したDOMツリーイメージ＊＊
+## **サンプルindex.htmlから作成したDOMツリーイメージ**
 ```text
 Document
 └─ html [lang="ja"]
@@ -90,7 +100,8 @@ Document
       └─ script [src="dom.js"]
 ```
 
-## **JavaScriptを使用しh1タグのテキストを「シンプルブログ」に変更する**
+## **２、要素ノードの変更**
+**JavaScriptを使用しh1タグのテキストを「シンプルブログ」に変更する**
 拡張子.jsで作成したテキスト(dom.js)に以下を記入する。
 ```text
 document.querySelector('h1).textContent = 'シンプルブログ';
@@ -129,7 +140,7 @@ document.querySelector('h1).textContent = 'シンプルブログ';
 - addEventListener('click', fn)
 ```
 
-# **イベントハンドラの設定**
+# **３、イベントハンドラの設定**
 JavaScript を使って、フォームの送信ボタンをクリックしたときに、  
 フォームに入力された内容（タイトルと本文）をコンソールに出力するようにする。
 ### **正解コード**
@@ -238,4 +249,217 @@ function handleClick() {
   console.log('タイトル:', title);
   console.log('本文:', content);
 }
+```
+## **４、要素ノードの追加**
+JavaScript を使って、フォームの送信ボタンをクリックしたときに、\
+フォームの内容を #posts の div タブ内に、以下の形式で表示するようにする。
+```text
+<div id="posts">
+  <h2>入力されたタイトル</h2>
+  <p>入力された本文</p>
+</div>
+```
+### **正解コード**
+```text
+document.querySelector('h1').textContent = 'シンプルブログ';
+//フォーム要素と入力欄を取得
+const form = document.getElementById('post-form');
+const submitBtn = form.querySelector('input[type="submit"]');
+const titleInput = document.getElementById('title');
+const contentTextarea = document.getElementById('content');
+const posts = document.getElementById('posts');
+
+//①※ページのリロードを止める！
+form.addEventListener('submit', (e) => e.preventDefault());
+//②送信ボタンをクリックした時に実行
+submitBtn.addEventListener('click', () => {
+
+    const title = titleInput.value.trim();
+    const content = contentTextarea.value.trim();
+
+    console.log('タイトル:', title);
+    console.log('本文:', content);
+
+//#postsの中身を指定の形に置き換え
+    const h2 = document.createElement('h2');
+    h2.textContent = title;
+    const p = document.createElement('p');
+    p.textContent = content;
+
+    posts.replaceChildren(h2, p);
+});
+```
+### **解説**
+- [//フォーム要素と入力欄を取得]の欄に\
+    `const posts = document.getElementById('posts');`を追加
+- [//#postsの中身を指定の形に置き換え]の欄を追加\
+- `const h2 = ...`
+    イコール[=]以下を`h2`へ代入する。（再代入不可）
+- `document.createElement('h2');`
+    `h2`要素オブジェクトを作成。
+- `posts.replaceChildren(h2, p);`
+    `Children`は子要素と言う意味。ここでの親は`posts`\
+    子要素を全部消して、引数で渡した順に新しい子要素として追加する。**(置き換えメソッド)**
+
+- replaceと併せて覚えておくと便利
+    ```text
+    全部置き換え：posts.replaceChildren(h2, p)
+
+    末尾に追加：posts.append(h2, p)（既存の投稿を残して足していく）
+
+    先頭に追加：posts.prepend(h2, p)
+
+    文字だけなら：posts.textContent = '' で空にしてから append(...)
+    ```
+
+## **５、要素ノードの追加**
+JavaScript を使って、フォームの送信ボタンをクリックしたときに、フォームの中身を空にしてください。
+### **正解コード**
+```text
+document.querySelector('h1').textContent = 'シンプルブログ';
+//フォーム要素と入力欄を取得
+const form = document.getElementById('post-form');
+const submitBtn = form.querySelector('input[type="submit"]');
+const titleInput = document.getElementById('title');
+const contentTextarea = document.getElementById('content');
+const posts = document.getElementById('posts');
+
+//①※ページのリロードを止める！
+form.addEventListener('submit', (e) => e.preventDefault());
+//②送信ボタンをクリックした時に実行
+submitBtn.addEventListener('click', () => {
+
+    const title = titleInput.value.trim();
+    const content = contentTextarea.value.trim();
+
+    console.log('タイトル:', title);
+    console.log('本文:', content);
+
+//#postsの中身を指定の形に置き換え
+    const h2 = document.createElement('h2');
+    h2.textContent = title;
+    const p = document.createElement('p');
+    p.textContent = content;
+    posts.replaceChildren(h2, p);
+//フォームの中身を空にする
+    form.reset(); 
+});
+```
+### **解説**
+今回の追加項目は以下↓↓
+```text
+//フォームの中身を空にする
+    form.reset(); 
+    titleInput.focus();
+```
+- `form.reset();`
+    全ての入力要素を初期値に戻す。
+
+## **スタイルの変更**
+JavaScript を使って、#post-form の div タブ上にマウスポインターを乗せたタイミングで背景色を黄色に、マウスポインターを外したタイミングで白色に変更するようにしてください。
+
+### **正解コード**
+```text
+document.querySelector('h1').textContent = 'シンプルブログ';
+//フォーム要素と入力欄を取得
+const form = document.getElementById('post-form');
+const submitBtn = form.querySelector('input[type="submit"]');
+const titleInput = document.getElementById('title');
+const contentTextarea = document.getElementById('content');
+const posts = document.getElementById('posts');
+
+//ここに色変更を追加
+form.addEventListener('pointerenter', () => { document.body.style.backgroundColor = 'yellow'; });
+form.addEventListener('pointerleave', () => { document.body.style.backgroundColor = 'white'; });
+
+//①※ページのリロードを止める！
+form.addEventListener('submit', (e) => e.preventDefault());
+//②送信ボタンをクリックした時に実行
+submitBtn.addEventListener('click', () => {
+
+    const title = titleInput.value.trim();
+    const content = contentTextarea.value.trim();
+
+    console.log('タイトル:', title);
+    console.log('本文:', content);
+
+//#postsの中身を指定の形に置き換え
+    const h2 = document.createElement('h2');
+    h2.textContent = title;
+    const p = document.createElement('p');
+    p.textContent = content;
+    posts.replaceChildren(h2, p);
+//フォームの中身を空にする
+    form.reset(); 
+    titleInput.focus();
+});
+```
+### **解説**
+今回の追加項目はここです↓↓
+
+```text
+form.addEventListener('pointerenter', () => { document.body.style.backgroundColor = 'yellow'; });
+form.addEventListener('pointerleave', () => { document.body.style.backgroundColor = 'white'; });
+```
+ポイントは`pointerenter`と`pointerleave`です。
+
+## **７、要素ノードの削除**
+フォームの投稿が増え、#posts の div タブ内に表示される投稿が多くなってきたとします。このとき #posts の div タブ内に追加された投稿の数が3つを超えた場合、一番古い投稿を削除してください。なお、4で作成した投稿の表示形式は変更して構いません。
+## **正解コード**
+```text
+document.querySelector('h1').textContent = 'シンプルブログ';
+//フォーム要素と入力欄を取得
+const form = document.getElementById('post-form');
+const submitBtn = form.querySelector('input[type="submit"]');
+const titleInput = document.getElementById('title');
+const contentTextarea = document.getElementById('content');
+const posts = document.getElementById('posts');
+
+//ここに色変更を追加
+form.addEventListener('pointerenter', () => { document.body.style.backgroundColor = 'yellow'; });
+form.addEventListener('pointerleave', () => { document.body.style.backgroundColor = 'white'; });
+
+//①※ページのリロードを止める！
+form.addEventListener('submit', (e) => e.preventDefault());
+//②送信ボタンをクリックした時に実行
+submitBtn.addEventListener('click', () => {
+
+    const title = titleInput.value.trim();
+    const content = contentTextarea.value.trim();
+
+    console.log('タイトル:', title);
+    console.log('本文:', content);
+
+
+    //#postsの中身を指定の形に置き換え
+    const h2 = document.createElement('h2');
+    h2.textContent = title;
+    const p = document.createElement('p');
+    p.textContent = content;
+    posts.prepend(p);   // 先に p を入れる
+    posts.prepend(h2);  // 次に h2 を入れる（結果：先頭が h2、その下に p）
+
+    // 3投稿(= 子要素 6個)を超えたら、一番古いセット（末尾の p → h2）を削除
+    while (posts.children.length > 6) {
+    posts.lastElementChild.remove(); // 古いほうの p
+    posts.lastElementChild.remove(); // 古いほうの h2
+}
+
+//フォームの中身を空にする
+    form.reset();
+    titleInput.focus();
+});
+```
+### **解説＊＊
+今回の追加項目はここです↓↓
+```text
+posts.prepend(p);   // 先に p を入れる
+  posts.prepend(h2);  // 次に h2（結果：先頭が h2 → その下に p）
+
+  // 3投稿(= 子要素6個)を超えたら、一番古いセット（末尾の p → h2）を削除
+  while (posts.children.length > 6) {
+    posts.lastElementChild.remove(); // 古いほうの p
+    posts.lastElementChild.remove(); // 古いほうの h2
+  }
+
 ```
