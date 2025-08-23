@@ -19,16 +19,16 @@ HTML            →     DOMツリー（ブラウザが作る）
 そのツリーを探す・読む・書き換えるための関数やプロパティ。
 例：querySelector() / textContent / appendChild()。
 
-目的：JavaScriptから画面の内容（HTML）を安全・一貫したやり方で操作できるようにするため。
+目的：JavaScriptから画面の内容（HTML）を安全・一貫したやり方で操作できるようにするため。  
 → 文字を書き換える、要素を追加/削除する、クリックに反応する…など。
 
 ## **要点**
 JSは“言語”、DOMは“ブラウザが提供する機能（API）”。
 
 ## **実行イメージ**
--1,ブラウザがHTMLを読む
--2,DOMツリーを作る（内部的なオブジェクトの木）
--3,JavaScriptがDOM APIを呼んで、表示を変えたりイベントに反応したりする
+-1,ブラウザがHTMLを読む。  
+-2,DOMツリーを作る。（内部的なオブジェクトの木）  
+-3,JavaScriptがDOM APIを呼んで、表示を変えたりイベントに反応したりする。  
 
 
 # **以下、サンプルを使用し、動作説明**
@@ -36,7 +36,7 @@ JSは“言語”、DOMは“ブラウザが提供する機能（API）”。
 - DOMというディレクトリー内に以下のテキストを作成済み。
     - index.html
     - dom.js
-- <body>タグの最下部に`<script src="dom.js"></script>`を挿入済み。
+- `<body>`タグの最下部に `<script src="dom.js"></script>` を挿入済み。
 
 ## **サンプルindex.html**
 ```text
@@ -91,17 +91,17 @@ Document
 ```
 
 ## **JavaScriptを使用しh1タグのテキストを「シンプルブログ」に変更する**
-拡張子.jsで作成したテキストに以下を記入する。
+拡張子.jsで作成したテキスト(dom.js)に以下を記入する。
 ```text
 document.querySelector('h1).textContent = 'シンプルブログ';
 ```
 ### **手順**
 - ブラウザはHTMLを読み込むとDOMを作成する。
-- JavaScriptでDOMの中から<h1>タグを見つけ、テキストを変更する。
+- JavaScriptでDOMの中から`<h1>`タグを見つけ、テキストを変更する。
 
 ### **解説**
 `document.querySelector('h1)`
-    - DOMの中かから`<h1>`要素をとってくる。
+    - DOMの中かから`<h1>`要素をとってくる。  
 `.textContent = 'シンプルブログ'`
     - その要素の表示テキストを'シンプルブログ'に変更する。
 
@@ -111,7 +111,7 @@ document.querySelector('h1).textContent = 'シンプルブログ';
 - getElementById()
 - querySelector()
 - querySelectorAll()（CSSセレクタで要素を探す）
-
+**`querySelector`系は"get"がつかない**
 中身の変更：
 - textContent
 - innerHTML（まずは安全な textContent を使う）
@@ -130,12 +130,13 @@ document.querySelector('h1).textContent = 'シンプルブログ';
 ```
 
 # **イベントハンドラの設定**
-JavaScript を使って、フォームの送信ボタンをクリックしたときに、
+JavaScript を使って、フォームの送信ボタンをクリックしたときに、  
 フォームに入力された内容（タイトルと本文）をコンソールに出力するようにする。
 ### **正解コード**
 ```text
 //①※ページのリロードを止める！
-form.addEventListener('submit', (e) => e.preventDefault());
+form.addEventListener('submit', (e) => e.preventDefault());  
+
 //②送信ボタンをクリックした時に実行
 submitBtn.addEventListener('click', () => {
 
@@ -148,72 +149,77 @@ submitBtn.addEventListener('click', () => {
 ```
 
 ### **解説＊＊
--①フォーム送信のデフォルト動作を止める
+-①フォーム送信のデフォルト動作を止める。  
 （手順では後から追加してもいい項目。山浦さんのYouTube「JavaScript」参照）
-`form.addEventListener('submit', (e) => e.preventDefault());`
+`form.addEventListener('submit', (e) => e.preventDefault());`  
     **何をしてる？**
-    フォームで「送信（submit）」が起きたときのイベントを監視して、
-    `e.preventDefault()` でブラウザ標準の動き（ページ遷移・リロード）を止める。
+    フォームで「送信（submit）」が起きたときのイベントを監視して、  
+    `e.preventDefault()` でブラウザ標準の動き（ページ遷移・リロード）を止める。  
 
 -②送信ボタンをクリックした時に実行するよう指示
-- `addEventListener('click', ...)`
-    送信ボタンをクリックしたときだけこの中の処理を実行する、という予約。
-- `titleInput.value / contentTextarea.value`
-    入力欄の中身の文字を取り出す。
-- `.trim()`
-    文字列の前後の空白や改行をカットする（うっかり入ったスペースを無視できる）。
-- `console.log(...)`
-    開発者ツールのコンソールに値を表示する。動作確認用のメモ出力。
+- `addEventListener('click', ...)`  
+    送信ボタンをクリックしたときだけこの中の処理を実行する、という予約。  
+- `titleInput.value / contentTextarea.value`  
+    入力欄の中身の文字を取り出す。  
+- `.trim()`  
+    文字列の前後の空白や改行をカットする（うっかり入ったスペースを無視できる）。  
+- `console.log(...)`  
+    開発者ツールのコンソールに値を表示する。動作確認用のメモ出力。  
 
 ### **前提条件**
-```text
 このコードの前に、次の変数が用意されている想定です：
 - `form `… `<form id="post-form">` を取ってきたもの
 - `submitBtn` … フォーム内の `<input type="submit">`
 - `titleInput` … `<input id="title">`
 - `contentTextarea` … `<textarea id="content">`
-```
-**これらの前提条件の"規則性"を理解するために必要な知識。**
-**<HTMLの形 ⇒（対応）⇒ JSの取り方・変数名が常に一定のパターンで結びつく>**
 
-- ①まず「鍵」を用意する（HTML側）
-    - 1つしかない要素 → id を付ける（例：id="post-form", id="title", id="content"）
-    - 複数ある/増える可能性がある要素 → class を付ける（例：class="post"）
-    - 種別や状態で探したい → 属性も使える（例：type="submit", data-role="..."）
-- ②鍵に合う「取り方」を選ぶ（JS側）
-    - id で1個だけ：
-        `document.getElementById('post-form')`
-    - CSSセレクタで1個目：
-        `document.querySelector('#title')`
-        （idは #title / クラスは .class名 / タグは p）
-    - ネストして範囲を絞る：親要素を起点にして、その“内側だけ”を探すこと。
-        全ページ（= document 全体）から探すのではなく、
-        特定の箱（親）を先に見つけて、その箱の中で検索する。
-        ex))`form.querySelector('input[type="submit"]')`
-        今回の「送信ボタン」は id が無いので、フォームの中を限定して
-        `form.querySelector('input[type="submit"]')` と取るのが基本。
-        **`document`は今表示しているそのページ全体を表すオブジェクト。**
-    - CSSセレクタで全部（複数）：
-        document.querySelectorAll('.post') → 繰り返しで使う
-- ③変数名のルールを決めて統一する
-    迷わないコツは一貫した命名。
-    ex))
-    要素には El / Elem を付ける：
-    const formEl = document.getElementById('post-form');
-    const titleEl = document.getElementById('title');
-    const contentEl = document.getElementById('content');
-    const submitBtnEl = formEl.querySelector('input[type="submit"]');
+**これらの前提条件の"規則性"を理解するために必要な知識。**  
+**<HTMLの形 ⇒（対応）⇒ JSの取り方・変数名が常に一定のパターンで結びつく>**  
 
-- 「役割 + 種類」で名付ける：
-titleInput, contentTextarea, submitBtn
+- **①まず「鍵」を用意する（HTML側）**
+    - 1つしかない要素 → id を付ける  
+    （例：id="post-form", id="title", id="content"）
+    - 複数ある/増える可能性がある要素 → class を付ける。  
+    （例：class="post"）  
+    - 種別や状態で探したい → 属性も使える。  
+    例：type="submit", data-role="..."）  
 
-複数は ...Els や ...List：const postEls = document.querySelectorAll('.post');
+- **②鍵に合う「取り方」を選ぶ（JS側）**  
+    - id で1個だけ：  
+        `document.getElementById('post-form')`  
+    - CSSセレクタで1個目：  
+        `document.querySelector('#title')`  
+        （idは #title / クラスは .class名 / タグは p）  
+    - ネストして範囲を絞る：親要素を起点にして、その“内側だけ”を探すこと。  
+        全ページ（= document 全体）から探すのではなく、  
+        特定の箱（親）を先に見つけて、その箱の中で検索する。  
+        ex))`form.querySelector('input[type="submit"]')`  
+        今回の「送信ボタン」は id が無いので、フォームの中を限定して  
+        `form.querySelector('input[type="submit"]')` と取るのが基本。  
+        **`document`は今表示しているそのページ全体を表すオブジェクト。**  
+    - CSSセレクタで全部（複数）：  
+        document.querySelectorAll('.post') → 繰り返しで使う  
 
-**どの流派でもOK。常に同じ規則で付けるのがいちばん大事。**
+- **③変数名のルールを決めて統一する**  
+    - 迷わないコツは一貫した命名。  
+    ex))  
+    要素には El / Elem を付ける：  
+    const formEl = document.getElementById('post-form');  
+    const titleEl = document.getElementById('title');  
+    const contentEl = document.getElementById('content');  
+    const submitBtnEl = formEl.querySelector('input[type="submit"]');  
 
-- ④いつも同じ並びで書く（テンプレ化）
+    - 「役割 + 種類」で名付ける：  
+    `titleInput`,`contentTextarea`,`submitBtn`
+
+    - 複数は ...Els や ...List：  
+    ex))`const postEls = document.querySelectorAll('.post');`  
+
+**~どの流派でもOK。常に同じ規則で付けるのがいちばん大事。~**
+
+- **④いつも同じ並びで書く（テンプレ化）**  
 **「変数まとめ → イベントまとめ → 関数」**
-たとえば、
+ex))  
 ```text
 // ① 要素参照（まとめて上に）
 const formEl = document.getElementById('post-form');
