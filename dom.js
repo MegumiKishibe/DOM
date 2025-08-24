@@ -14,10 +14,9 @@ form.addEventListener('pointerleave', () => { document.body.style.backgroundColo
 form.addEventListener('submit', (e) => e.preventDefault());
 //②送信ボタンをクリックした時に実行
 submitBtn.addEventListener('click', () => {
-
     const title = titleInput.value.trim();
     const content = contentTextarea.value.trim();
-
+    debugger;
     console.log('タイトル:', title);
     console.log('本文:', content);
 
