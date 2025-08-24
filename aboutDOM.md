@@ -450,16 +450,35 @@ submitBtn.addEventListener('click', () => {
     titleInput.focus();
 });
 ```
-### **解説＊＊
+index.htmlの変更点
+```text
+ <div id="posts">
+    <h2></h2>
+    <p></p>
+  </div>
+```
+### **解説**
 今回の追加項目はここです↓↓
 ```text
 posts.prepend(p);   // 先に p を入れる
-  posts.prepend(h2);  // 次に h2（結果：先頭が h2 → その下に p）
+posts.prepend(h2);  // 次に h2（結果：先頭が h2 → その下に p）
 
-  // 3投稿(= 子要素6個)を超えたら、一番古いセット（末尾の p → h2）を削除
-  while (posts.children.length > 6) {
-    posts.lastElementChild.remove(); // 古いほうの p
-    posts.lastElementChild.remove(); // 古いほうの h2
-  }
+// 3投稿(= 子要素6個)を超えたら、一番古いセット（末尾の p → h2）を削除
+while (posts.children.length > 6) {
+posts.lastElementChild.remove(); // 古いほうの p
+posts.lastElementChild.remove(); // 古いほうの h2
+}
 
 ```
+- `posts.prepend(p);` ,`posts.prepend(h2);`
+    この２行は実際にUIに表示させるための指示。
+- `prepend`
+    新しい投稿を先頭に出したかったのでこちらを選択しました。
+    `append`を選択すると、古い投稿が先頭になり２個目までしか表示されませんでした。
+- `while (posts.children.length > 6) {}`
+    postsの子要素を３回表示させるには、\
+    子要素が２つ存在するため、合計６回のループに設定しています。
+
+index.htmlの変更点は、問題文に
+>「なお、4で作成した投稿の表示形式は変更して構いません。」
+とあったので、削除しました。
